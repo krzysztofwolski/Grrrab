@@ -70,9 +70,9 @@
     </layout>
    </item>
    <item row="2" column="0">
-    <widget class="QPushButton" name="pushButton_start">
+    <widget class="QPushButton" name="pushButton_choosen">
      <property name="text">
-      <string>Pobierz zdjęcia i usuń je z karty pamięci!</string>
+      <string>Wybrałem już zdjęcia</string>
      </property>
     </widget>
    </item>

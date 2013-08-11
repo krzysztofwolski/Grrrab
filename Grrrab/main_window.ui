@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>348</width>
-    <height>526</height>
+    <height>448</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,6 +15,45 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Źródło plików</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_path_source"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_status_source">
+        <property name="text">
+         <string>Status folderu źródłowego</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="pushButton_auto_source">
+          <property name="text">
+           <string>Znajdź Automatycznie</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_manual_source">
+          <property name="text">
+           <string>Otwórz..</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
     <item row="7" column="0">
      <widget class="Line" name="line_2">
       <property name="orientation">
@@ -51,14 +90,14 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QPushButton" name="pushButton_3">
+         <widget class="QPushButton" name="pushButton_auto_dst_videos">
           <property name="text">
            <string>Znajdź Automatycznie</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton_4">
+         <widget class="QPushButton" name="pushButton_manual_dst_videos">
           <property name="text">
            <string>Otwórz...</string>
           </property>
@@ -67,52 +106,6 @@
        </layout>
       </item>
      </layout>
-    </item>
-    <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Źródło plików</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEdit_source_path"/>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_status_source">
-        <property name="text">
-         <string>Status folderu źródłowego</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="pushButton_autofind_source">
-          <property name="text">
-           <string>Znajdź Automatycznie</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_manual_source">
-          <property name="text">
-           <string>Otwórz..</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item row="14" column="0">
-     <widget class="QPushButton" name="pushButton_next">
-      <property name="text">
-       <string>Dalej!</string>
-      </property>
-     </widget>
     </item>
     <item row="13" column="0">
      <widget class="Line" name="line_3">
@@ -143,7 +136,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QPushButton" name="pushButton_autofind_dst_photos">
+         <widget class="QPushButton" name="pushButton_auto_dst_photos">
           <property name="text">
            <string>Znajdź Automatycznie</string>
           </property>
@@ -157,6 +150,31 @@
          </widget>
         </item>
        </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="15" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QPushButton" name="pushButton_choose">
+        <property name="text">
+         <string>Wybierz pliki</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Musisz jeszcze wybrać pliki!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_grrrab">
+        <property name="text">
+         <string>Pobierz zdjęcia!</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
