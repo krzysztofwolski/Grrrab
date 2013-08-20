@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Sun Aug 11 22:15:48 2013
+# Created: Tue Aug 20 11:46:02 2013
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 #
 # WARNING! All changes made in this file will be lost!
@@ -23,6 +23,7 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
         self.lineEdit_path_source = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit_path_source.setEnabled(False)
         self.lineEdit_path_source.setObjectName("lineEdit_path_source")
         self.verticalLayout.addWidget(self.lineEdit_path_source)
         self.label_status_source = QtGui.QLabel(self.centralwidget)
@@ -53,9 +54,10 @@ class Ui_MainWindow(object):
         self.label_3 = QtGui.QLabel(self.centralwidget)
         self.label_3.setObjectName("label_3")
         self.verticalLayout_2.addWidget(self.label_3)
-        self.lineEdit_path_dst_camera = QtGui.QLineEdit(self.centralwidget)
-        self.lineEdit_path_dst_camera.setObjectName("lineEdit_path_dst_camera")
-        self.verticalLayout_2.addWidget(self.lineEdit_path_dst_camera)
+        self.lineEdit_path_dst_videos = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit_path_dst_videos.setEnabled(False)
+        self.lineEdit_path_dst_videos.setObjectName("lineEdit_path_dst_videos")
+        self.verticalLayout_2.addWidget(self.lineEdit_path_dst_videos)
         self.label_status_dst_video = QtGui.QLabel(self.centralwidget)
         self.label_status_dst_video.setObjectName("label_status_dst_video")
         self.verticalLayout_2.addWidget(self.label_status_dst_video)
@@ -80,6 +82,7 @@ class Ui_MainWindow(object):
         self.label_5.setObjectName("label_5")
         self.verticalLayout_3.addWidget(self.label_5)
         self.lineEdit_path_dst_photos = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit_path_dst_photos.setEnabled(False)
         self.lineEdit_path_dst_photos.setObjectName("lineEdit_path_dst_photos")
         self.verticalLayout_3.addWidget(self.lineEdit_path_dst_photos)
         self.label_status_dst_photos = QtGui.QLabel(self.centralwidget)
@@ -100,9 +103,6 @@ class Ui_MainWindow(object):
         self.pushButton_choose = QtGui.QPushButton(self.centralwidget)
         self.pushButton_choose.setObjectName("pushButton_choose")
         self.verticalLayout_4.addWidget(self.pushButton_choose)
-        self.label_2 = QtGui.QLabel(self.centralwidget)
-        self.label_2.setObjectName("label_2")
-        self.verticalLayout_4.addWidget(self.label_2)
         self.pushButton_grrrab = QtGui.QPushButton(self.centralwidget)
         self.pushButton_grrrab.setObjectName("pushButton_grrrab")
         self.verticalLayout_4.addWidget(self.pushButton_grrrab)
@@ -130,6 +130,5 @@ class Ui_MainWindow(object):
         self.pushButton_auto_dst_photos.setText(QtGui.QApplication.translate("MainWindow", "Znajdź Automatycznie", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_manual_dst_photos.setText(QtGui.QApplication.translate("MainWindow", "Otwórz...", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_choose.setText(QtGui.QApplication.translate("MainWindow", "Wybierz pliki", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("MainWindow", "<html><head/><body><p align=\"center\"><span style=\" font-weight:600;\">Musisz jeszcze wybrać pliki!</span></p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButton_grrrab.setText(QtGui.QApplication.translate("MainWindow", "Pobierz zdjęcia!", None, QtGui.QApplication.UnicodeUTF8))
 

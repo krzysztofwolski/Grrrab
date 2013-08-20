@@ -25,7 +25,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_path_source"/>
+       <widget class="QLineEdit" name="lineEdit_path_source">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_status_source">
@@ -78,7 +82,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_path_dst_camera"/>
+       <widget class="QLineEdit" name="lineEdit_path_dst_videos">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_status_dst_video">
@@ -124,7 +132,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_path_dst_photos"/>
+       <widget class="QLineEdit" name="lineEdit_path_dst_photos">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_status_dst_photos">
@@ -159,13 +171,6 @@
        <widget class="QPushButton" name="pushButton_choose">
         <property name="text">
          <string>Wybierz pliki</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Musisz jeszcze wybrać pliki!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>

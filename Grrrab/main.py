@@ -3,6 +3,7 @@ import shutil
 import os
 import sys
 import time
+import datetime
 import json
 import platform
 from PIL import Image
@@ -10,8 +11,9 @@ from PIL.ExifTags import TAGS
 from PySide import QtCore, QtGui
 
 from main_window import Ui_MainWindow
-from copy import Ui_dialog_copy
+from copy_dialog import Ui_dialog_copy # TODO: change names
 from choose_files import Ui_dialog_choose_files
+from select_type import Ui_SelectTypeDialog
 
 
 class MediaFile():
@@ -21,8 +23,8 @@ class MediaFile():
 
     def __init__(self, path = None, type = None):
         """
-        :param path: path to file
-        :param type: type of file. Accepts "photo" or "video"
+        :param path: string. path to file
+        :param type: atring. type of file. Accepts "photo" or "video"
         """
         self.path = path
         self.type = type
@@ -51,9 +53,6 @@ class MediaFile():
                 self.exif = ret
                 return True
             except Exception as e:
-                print "Some problems here, Mate"
-                print self.path
-                print e
                 return False
 
 
@@ -64,14 +63,14 @@ class MediaFile():
         * if failed takes fle modification time
         """
         if self.exif is None:
-            if self.get_exif() is False:
-                return None
+            self.get_exif()
+        str_date = None
+        try:
+            str_date = self.exif.get("DateTime")
+            self.date = time.strptime(str_date, "%Y:%m:%d %H:%M:%S")
+        except:
+            self.date = time.gmtime(os.path.getctime(self.path))
 
-        str_date = self.exif.get("DateTime")
-        if str_date is None:
-            self.date = os.path.getctime(self.path)
-
-        self.date = time.strptime(str_date, "%Y:%m:%d %H:%M:%S")
         return True
 
 
@@ -84,6 +83,7 @@ class MySignal(QtCore.QObject):
     sigPhotosDirectoryChanged = QtCore.Signal(str)
     sigTargetDirectoryChanged = QtCore.Signal(str)
     sigUpdateBigStatus = QtCore.Signal(str)
+    sigFilesTypeChanged = QtCore.Signal(str)
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -131,6 +131,10 @@ class MainWindow(QtGui.QMainWindow):
 
         self.files_type = None
         self.media_files = []
+        self.found_videos = []
+        self.found_photos = []
+        self.found_videos_strings = []
+        self.found_photos_strings = []
         self.media_files_strings = []
         self.first_file = 0
         self.last_file = 0
@@ -146,19 +150,36 @@ class MainWindow(QtGui.QMainWindow):
         self.ui.pushButton_auto_dst_photos.clicked.connect(self.auto_find_destination_photos)
         self.ui.pushButton_auto_dst_videos.clicked.connect(self.auto_find_destination_videos)
 
+        # todo: do it if bored: manually edited paths
+        # self.ui.lineEdit_path_source.textEdited.connect(self.source_directory_edited)
+        # self.ui.lineEdit_path_dst_photos.textEdited.connect(self.videos_directory_edited)
+        # self.ui.lineEdit_path_dst_camera.textEdited.connect(self.photos_directory_edited)
+
         self.signal.sigSourceDirectoryChanged.connect(self.set_source_directory)
         self.signal.sigVideoDirectoryChanged.connect(self.set_video_directory)
         self.signal.sigPhotosDirectoryChanged.connect(self.set_photos_directory)
+        self.signal.sigFilesTypeChanged.connect(self.set_files_type)
         # self.signal.sigTargetDirectoryChanged.connect()
 
         # paths setups
         self.signal.sigPhotosDirectoryChanged.emit(self.json.get("path_destination_photos"))
         self.signal.sigVideoDirectoryChanged.emit(self.json.get("path_destination_videos"))
+
     def closeEvent(self, event):
         f = open(self.path_settings, "w")
         # f.open()
         f.write(json.dumps(self.json))
         f.close()
+
+    # todo: do it if bored: manually edited paths
+    # def source_directory_edited(self):
+    #     self.signal.sigSourceDirectoryChanged.emit(self.ui.lineEdit_path_source.text())
+    #
+    # def videos_directory_edited(self):
+    #     self.signal.sigVideoDirectoryChanged.emit(self.ui.lineEdit_path_dst_camera.text)
+    #
+    # def photos_directory_edited(self):
+    #     self.signal.sigPhotosDirectoryChanged.emit(self.ui.lineEdit_path_dst_photos.text)
 
     def auto_find_source(self):
         if platform.system() == "Windows":
@@ -168,6 +189,7 @@ class MainWindow(QtGui.QMainWindow):
                 self.signal.sigSourceDirectoryChanged.emit(drives[0])
 
         else:
+            # todo: make linux port
             print "Feature not supported in linux. ~Soon~"
         
 
@@ -176,6 +198,18 @@ class MainWindow(QtGui.QMainWindow):
 
     def auto_find_destination_videos(self):
         pass
+
+    def set_files_type(self, type):
+        if type == "photo":
+            self.files_type = "photo"
+            self.media_files = self.found_photos
+            self.media_files_strings = self.found_photos_strings
+        elif type == "video":
+            self.files_type = "video"
+            self.media_files = self.found_videos
+            self.media_files_strings = self.found_videos_strings
+        else:
+            raise Exception("Invalid file type!")
 
     def set_source_directory(self, path):
         # todo: put some assets here
@@ -209,7 +243,7 @@ class MainWindow(QtGui.QMainWindow):
             self.path_destination_videos = path
             self.json["path_destination_videos"] = path
             #todo : rename this lineedit to "video"
-            self.ui.lineEdit_path_dst_camera.setText(path)
+            self.ui.lineEdit_path_dst_videos.setText(path)
             self.ui.label_status_dst_video.setText("<font color='green'>Ok!</font>")
         else:
             print u"Niepoprawny katalog kamery"
@@ -224,8 +258,13 @@ class MainWindow(QtGui.QMainWindow):
                 u"Nie wszystkie dane zostały uzupełnione.",\
                 QtGui.QMessageBox.Ok)
             return
-        # sprawdz typ pliku
-        self.files_type = "photos"
+
+        # Clean up
+        self.files_type = ""
+        self.found_videos = []
+        self.found_photos = []
+        self.found_photos_strings = []
+        self.found_videos_strings = []
 
         #zaladuj nazwy i daty
         for root, dirs, files in os.walk(self.path_source):
@@ -233,18 +272,39 @@ class MainWindow(QtGui.QMainWindow):
                 if name.endswith(self.photos_file_types):
                     mf = MediaFile(path=os.path.join(root,name))
                     t =  mf.date
+                    mf.type = "photo"
                     if mf.date is not None:
-                        self.media_files.append(mf)
-                        self.media_files_strings.append(time.strftime("%Y-%m-%d %H:%M", t))
+                        self.found_photos.append(mf)
+                        self.found_photos_strings.append(name + "  " + time.strftime("%Y-%m-%d %H:%M", t))
+                elif name.endswith(self.videos_file_types):
+                    mf = MediaFile(path=os.path.join(root,name))
+                    t =  mf.date
+                    mf.type = "video"
+                    if mf.date is not None:
+                        self.found_videos.append(mf)
+                        self.found_videos_strings.append(name + "  " + time.strftime("%Y-%m-%d %H:%M", t))
 
 
-        if len(self.media_files) == 0:
+        if len(self.found_photos) == 0 and len(self.found_videos) == 0:
             reply = QtGui.QMessageBox.critical(self, u"Nie znaleziono plikow",\
                 u"Przykto mi, ale nie znaleziono plików",\
                 QtGui.QMessageBox.Ok)
             return
-        self.last_file = len(self.media_files) - 1
+        elif len(self.found_photos) > 0 and len(self.found_videos) == 0:
+            self.signal.sigFilesTypeChanged.emit("photo")
+        elif len(self.found_videos) > 0 and len(self.found_photos) == 0:
+            self.signal.sigFilesTypeChanged.emit("video")
+        else:
+            dlg = SelectTypeDialog(mw = self)
+            dlg.show()
+            dlg.exec_()
 
+            if self.files_type != "photo" and self.files_type != "video":
+                print "asdasdasd"
+                return # no files type selected
+
+
+        self.last_file = len(self.media_files) - 1
         #odpal
 
         a = ChooseDialog(mw = self)
@@ -307,6 +367,7 @@ class ChooseDialog(QtGui.QDialog):
         self.set_event_name()
 
         self.ui.comboBox_first_file.currentIndexChanged.connect(self.set_first)
+        self.ui.comboBox_last_file.currentIndexChanged.connect(self.set_last)
         self.ui.lineEdit.textChanged.connect(self.set_event_name)
         self.ui.pushButton_choosen.clicked.connect(self.close)
 
@@ -327,6 +388,32 @@ class ChooseDialog(QtGui.QDialog):
 
         self.mw.path_dirname = os.path.join(self.mw.path_destination_photos, e)
         self.ui.label_dst_catalog.setText(self.mw.path_dirname)
+
+
+class SelectTypeDialog(QtGui.QDialog):
+    def __init__(self, parent=None, mw = None):
+        super(SelectTypeDialog, self).__init__(parent)
+        self.ui = Ui_SelectTypeDialog()
+        self.ui.setupUi(self)
+        self.signal = MySignal()
+
+        self.mw = mw
+        if mw is None:
+            raise Exception("Ten dialog potrzebuje referencji do glownego okna!")
+
+        self.ui.label_counter_photos.setText(str(len(self.mw.found_photos)))
+        self.ui.label_counter_videos.setText(str(len(self.mw.found_videos)))
+        self.ui.pushButton_copy_photos.clicked.connect(self.set_type_photos)
+        self.ui.pushButton_copy_videos.clicked.connect(self.set_type_videos)
+        self.ui.pushButton_cancel.clicked.connect(self.close)
+
+    def set_type_photos(self):
+        self.mw.signal.sigFilesTypeChanged.emit("photo")
+        self.close()
+
+    def set_type_videos(self):
+        self.mw.signal.sigFilesTypeChanged.emit("video")
+        self.close()
 
 
 class CopyDialog(QtGui.QDialog):
@@ -373,18 +460,28 @@ class CopyThread(QtCore.QThread):
         if not os.path.exists(self.mw.path_dirname):
             os.makedirs(self.mw.path_dirname)
 
+        # f_nr = len([name for name in os.listdir('.') if os.path.isfile(name)])
+
         v = 0
         for f in self.mw.media_files:
             print f.path, self.mw.path_dirname
-            self.cw.signal.sigLabel.emit(f.path)
-            # todo: trzeba to lepiej ogarnąć.
+            self.cw.signal.sigCurrentFileLabel.emit(f.path)
+            # todo: nazwa pliku powinna zalezec od liczby plikow w folderze
             try:
+                # ext = os.path.basename(f.path).split(".")[-1]
+                # n = self.mw.path_dirname
+
                 shutil.move(f.path, self.mw.path_dirname)
             except Exception as e:
                 print e
+
             v += 1
             self.cw.signal.sigProgress.emit(v)
-        self.cw.signal.sigLabel.emit(u"Operacja zakończona sukcesem!")
+
+            if v > self.mw.last_file:
+                break
+
+        self.cw.signal.sigCurrentFileLabel.emit(u"Operacja zakończona sukcesem!")
         self.cw.ui.pushButton_end.setEnabled(True)
 
 
